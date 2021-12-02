@@ -1,0 +1,34 @@
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}

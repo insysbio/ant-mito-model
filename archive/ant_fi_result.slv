@@ -1,0 +1,1619 @@
+DBSolve Optimum (new parser) 1 Jul 2006
+SLV25.00*
+Number of rows in matrix (Number of activities) #0
+Number of cols in matrix (Number of compounds) #0
+Initial System dimension #0
+Selected Variable(Always TIME for ODE) #1
+Maximum Value of the Selected Variable #1.000000e+02
+Minimum Value of the Selected Variable #0.000000e+00
+Initial Step #1.000000e-03
+Method Accuracy #1.000000e-05
+Maximum Number of Method Steps #10000
+1st Variale for plotting   #D_o
+2nd Variable for plotting: #v1_ANT
+1st Value Maximum for plotting #1.000000e+02
+1st Value Minimum for plotting #0.000000e+00
+2nd Value Maximum for plotting #1.000000e+00
+2nd Value Minimum for plotting #0.000000e+00
+Distance between Plotting points #1.000000e+02
+Step for Numerical derivation #1.000000e-05
+(Internal) DbsolveStep WWW Demo #701
+Elementary Constant #1
+FileOutput #0
+TextOutput #1
+DrawOutput #1
+TransferLast #0
+Stoichiometric Matrix 
+#0 0 0.0
+&
+Elementary Constants 
+#1.580186e+00  1.971202e+00  
+Initial concentrations 
+#
+Initial Stiffness
+#
+Initial Family Steps
+#
+Number of fitting parameters (Old Income Flux Constant Number) 
+#20
+Number of scan parameters 
+#20
+ABsolute Fitting 
+#1
+Variables for FileOutput 
+#X[1]  X[2]  X[3]  X[4]  X[5]  X[6]  X[7]   #####
+Variables for FileOutputOn 
+# #####
+(Internal) Temporary Print Option 
+#-589613110
+LeastFitting 
+#1
+Output File Name 
+#ma.out
+Experimental Data File Name 
+#ANT_dat.dat
+Right Hand Sides && 
+Initial Values && 
+Comments Or Selkov DB record  
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+Model of adeninnucleotide-translocase (ANT) in rat liver mitochondria
+----------------------
+Here we introduce following designations for metabolite concentrations
+H_o - proton concentration in citosol
+H_i - proton concentration in matrix
+pH_o - pH in in citosol
+pH_i - pH in in matrix
+T_o_free - free ATP concentrations in citosol
+D_o_free - free ADP concentrations in citosol
+Mg_o - free Mg concenrations in citosol
+fi - membrane potential without degree
+T_o - total ATP concentrations in citosol
+D_o - total ADP concentrations in citosol
+Literature
+{1} The J. of Experimental Biology 1995, 198, 1775-1782
+{2} Biochemistry 1982, 21(5), 1082-1089
+
+#dbs#
+The Number of Active P[i] for fitting 
+#11 
+Relative step
+#1.000000e-01 
+Tolerance for fitting sens
+#1.000000e-03 
+Tolerance for fitting 
+#0.000000e+00 
+Step for fitting 
+#-1.000000e-30 
+Indexes of P[i] for fitting 
+#1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
+Minimum for fitting 
+#0.000000e+00 0.000000e+00 1.000000e-12 1.000000e-12 1.000000e-12 1.000000e-12 1.000000e-12 1.000000e-12 -1.000000e+01 -1.000000e+01 -1.000000e+01 1.000000e+01 1.000000e+01 1.000000e+01 1.000000e+01 1.000000e-10 1.000000e-10 1.000000e-10 0.000000e+00 0.000000e+00 
+Maximum for fitting 
+#1.000000e+00 1.000000e+00 1.000000e+12 1.000000e+12 1.000000e+12 1.000000e+12 1.000000e+12 1.000000e+12 1.000000e+01 1.000000e+01 1.000000e+01 1.000000e+04 1.000000e+04 1.000000e+04 1.000000e+04 1.000000e+10 1.000000e+10 1.000000e+10 0.000000e+00 0.000000e+00 
+Step for fitting 
+#4.576000e-02 4.576000e-02 4.576000e-02 4.576000e-02 4.576000e-02 4.576000e-02 4.576000e-02 4.576000e-02 2.364000e-02 2.147000e-02 6.336000e-03 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00 
+IsLog flag for fitting 
+#1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 
+Use Implicit Solving Method  Flag 
+#0 
+Use Experimental Data Flag 
+#1 
+The Number of Active P[i] for scan 
+#11 
+Minimum for param scan 
+#1.000000e-05 1.000000e-05 1.000000e-05 1.000000e-05 1.000000e-05 1.000000e-05 1.000000e-05 1.000000e-05 -1.000000e+01 0.000000e+00 0.000000e+00 1.000000e+01 1.000000e+01 1.000000e+01 1.000000e+01 1.000000e-10 1.000000e-10 1.000000e-10 0.000000e+00 0.000000e+00 
+Maximum for param scan 
+#1.000000e+00 1.000000e+00 1.000000e+05 1.000000e+05 1.000000e+05 1.000000e+05 1.000000e+05 1.000000e+05 0.000000e+00 1.000000e+01 1.000000e+01 1.000000e+04 1.000000e+04 1.000000e+04 1.000000e+04 1.000000e+10 1.000000e+10 1.000000e+10 0.000000e+00 0.000000e+00 
+Divisions for param scan 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Iterations for param scan 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Pathway Name 
+#Name_of_the_process
+Chart file Name
+#tmp.bmp
+Compound index
+#
+Compound Location
+#
+EC code index
+#
+Enzyme location
+#
+Compound concentration
+#
+Enzyme Concentrations
+#
+Indexes of Mechanisms
+#
+Cleland Indexes 1->A 2->B 3->C -1->P -2->Q
+#0 0 0
+Elementary constants
+Kinetic constants
+X Concentration
+#
+Organism Indexes(only for Enzymes)
+#
+>Tigr_Sequence_IDs
+>E.coli_Ids
+>Similarity_Comment_IDs
+#
+FamilyOption
+#0
+FamilyTimes
+#6
+FamilyStep
+#1.000000e+02
+Title for X Axes
+#0
+Title for Y Axes
+#0
+Use ODE's Solver Flag for fitting
+#0 
+Use Sensitivity coefficients
+#0 
+Type of the bifurcation curve
+#0 
+Indices of Active bifurcation parameters
+#1 0 
+Minimum for Active bifurcation parameters
+#0.000000e+00 0.000000e+00 
+Maximum for Active bifurcation parameters
+#1.000000e+02 1.000000e+02 
+Initial Steps for Active bifurcation parameters
+#1.000000e+00 0.000000e+00 
+Use Linlbf Solver Flag for fitting
+#0 
+Redraw Plot Window
+#0 
+Variable for Family
+#k1n_ANT 
+Sign for Family
+#+       
+Initial  for Family
+#0.000000e+00 
+Implicit Algebraic System Dimension
+#1
+Implicit Selected Variable
+#1
+Implicit Selected Variable Min 
+#0.000000e+00
+Implicit Selected Variable Max 
+#1.000000e+01
+Implicit Steps Number 
+#10000
+Implicit Initial Step 
+#1.000000
+Implicit Tolerance    
+#1.000000e-03
+Explicit Selected Variable  
+#5
+Explicit Selected Variable Min 
+#7.200000e+00
+Explicit Selected Variable Max 
+#7.800000e+00
+Explicit Initial Step 
+#0.010000
+Bifurcation Algebraic System Dimension
+#0
+Bifurcation Selected Variable
+#4
+Bifurcation Selected Variable Min 
+#-1.000000e+01
+Bifurcation Selected Variable Max 
+#1.000000e+01
+Bifurcation Steps Number
+#1
+Bifurcation Initial Step
+#0.100000
+Bifurcation Tolerance
+#1.000000e-03
+ODE 1st Variale for plotting  #X[0]
+ODE 2nd Variable for plotting #X[1]
+ODE 1st Value Maximum for plotting #0.000000e+00
+ODE 1st Value Minimum for plotting #0.000000e+00
+ODE 2nd Value Maximum for plotting #0.000000e+00
+ODE 2nd Value Minimum for plotting #0.000000e+00
+ODE Title for X Axes
+#Time
+ODE Title for Y Axes
+#X[1]
+BET 1st Variale for plotting  #X[1]
+BET 2nd Variable for plotting #P[1]
+BET 1st Value Maximum for plotting #0.000000e+00
+BET 1st Value Minimum for plotting #0.000000e+00
+BET 2nd Value Maximum for plotting #0.000000e+00
+BET 2nd Value Minimum for plotting #0.000000e+00
+BET Title for X Axes
+#P[1]
+BET Title for Y Axes
+#X[1]
+ALG 1st Variale for plotting  #pH_o
+ALG 2nd Variable for plotting #v_obm_ANT
+ALG 1st Value Maximum for plotting #0.000000e+00
+ALG 1st Value Minimum for plotting #0.000000e+00
+ALG 2nd Value Maximum for plotting #0.000000e+00
+ALG 2nd Value Minimum for plotting #0.000000e+00
+ALG Title for X Axes
+#pH_o
+ALG Title for Y Axes
+#v_obm_ANT
+BIF 1st Variale for plotting  #P[1]
+BIF 2nd Variable for plotting #X[1]
+BIF 1st Value Maximum for plotting #0.000000e+00
+BIF 1st Value Minimum for plotting #0.000000e+00
+BIF 2nd Value Maximum for plotting #0.000000e+00
+BIF 2nd Value Minimum for plotting #0.000000e+00
+BIF Title for X Axes
+#P[1]
+BIF Title for Y Axes
+#X[1]
+FIT 1st Variale for plotting  #fitterIteration
+FIT 2nd Variable for plotting #F[0]
+FIT 1st Value Maximum for plotting #0.000000e+00
+FIT 1st Value Minimum for plotting #0.000000e+00
+FIT 2nd Value Maximum for plotting #0.000000e+00
+FIT 2nd Value Minimum for plotting #0.000000e+00
+FIT Title for X Axes
+#fitterIteration
+FIT Title for Y Axes
+#F[0]
+>Reaction Names
+>Compound Names
+>Mechanism Rate Low expression -Kinetic or Elementary constants
+#
+>Mechanism  Rate (Fast)
+#
+>Parameters for Fitting
+#del_D
+#del_T
+#k1_ANT
+#k2_ANT
+#k3_ANT
+#k4_ANT
+#K_D_o_ANT
+#K_T_o_ANT
+#A
+#B
+#C
+#
+#
+#
+#
+#
+#P[17]
+#P[18]
+#P[19]
+#P[20]
+>Parameters for Scan
+#del_D
+#del_T
+#k1_ANT
+#k2_ANT
+#k3_ANT
+#k4_ANT
+#K_D_o_ANT
+#K_T_o_ANT
+#A
+#B
+#C
+#
+#
+#
+#
+#
+#P[17]
+#P[18]
+#P[19]
+#P[20]
+>Parameters for Bifurcation
+#P[1]
+#P[2]
+#(null)
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+##
+>Parameters for Implicit
+#P[1]
+#(null)
+#(null)
+#X[6]
+#X[7]
+#X[8]
+#X[9]
+#X[10]
+#X[11]
+#X[12]
+#X[13]
+#X[14]
+#X[15]
+#X[16]
+#X[17]
+#X[16]
+#X[17]
+#X[18]
+#X[19]
+#X[20]
+>Parameters for Explicit
+#pH_o
+#X[4]
+#X[5]
+#X[6]
+#X[7]
+#X[8]
+#X[9]
+#X[10]
+#X[11]
+#X[12]
+#X[13]
+#X[14]
+#X[15]
+#X[16]
+#X[17]
+#X[16]
+#X[17]
+#X[18]
+#X[19]
+#X[20]
+Z axis ODE#
+Z axis BET#
+Z axis ALG#
+Z axis BIF#
+Z axis FIT#
+>Parameters for Sensitivity
+#P[1]
+#P[2]
+#P[3]
+#P[4]
+#P[5]
+#P[6]
+#P[7]
+#P[8]
+#P[9]
+#P[10]
+#P[11]
+#P[12]
+#P[13]
+#P[14]
+#P[15]
+#P[16]
+#P[17]
+#P[18]
+#P[19]
+#P[20]
+>Compound Selkov Names
+>Selkov Location
+>Selkov ReactionName
+Metabolic Regulation ReactionName
+#0 0
+Metabolic Regulation CompoundName
+MetabolicRegulation
+#0 0 0
+Operon Name Operon
+#0 0
+Gene Name Operon
+Operon Structure
+#0 0 0
+GeneticNetwork InteractionName
+#0 0
+GeneticNetwork GeneProductName
+Genetic Network
+#0 0 0
+Interaction ProcessName
+#0 0
+Interaction GeneProductName
+InteractionNetwork
+#0 0 0
+<Interaction Regulation ProcessName
+#0 0
+<Interaction Regulation GeneProductName
+<InteractionRegulation
+#0 0 0
+<PATH->ReverseReactionID
+#
+<PATH->ExternalFluxID
+#
+<PATH->Type
+#
+<PON->Type
+#
+<PIN->Type
+#
+<Metabolic model Dimension
+#0 0
+<Total Cellular Model Dimension
+#0 0
+<Total Cellular Process Names
+<Total Entity Names
+<Index Link to metabolic
+#
+<Index Link to genetic
+#
+<Index Link to protein
+#
+<Total Network Matrix
+#0 0 0
+<Total Regulation Network
+#0 0 0
+<E Index Total
+#
+<P Index Total
+#
+<E Index Metabolic
+#
+<P Index Metabolic
+#
+<E Index Genetic
+#
+<P Index Genetic
+#
+<E Index Protein
+#
+<P Index Protein
+#
+<M Reaction Laws
+<P Use User's mechanisms
+#
+
+<POOLS 0
+#
+
+#
+
+<POOLS 1
+#
+
+#
+
+<POOLS 2
+#
+
+#
+
+<POOLS 3
+#
+
+#
+
+<RHS 0
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 1
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 2
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 3
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<INI 0
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 1
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 2
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 3
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<POOLS 4
+#
+
+#
+
+<POOLS 5
+#
+
+#
+
+<POOLS 6
+#
+
+#
+
+<POOLS 7
+#
+
+#
+
+<RHS 4
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 5
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 6
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<RHS 7
+#
+// ANT model
+// Here we express proton concentration via pH
+H_o=exp(-pH_o*ln(10))*1e6;     // {uM}
+H_i=exp(-pH_i*ln(10))*1e6;     // {uM}
+// Here we express concentration of free adeninnucleotides
+T_o_free=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));    // {uM}
+T_i_free=T_i/(1+Mg_i/K_t_mg+H_i/K_t_h+Mg_i*H_i/(K_th_mg*K_t_h));    // {uM}
+D_o_free=D_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));    // {uM}
+D_i_free=D_i/(1+Mg_i/K_d_mg+H_i/K_d_h+Mg_i*H_i/(K_dh_mg*K_d_h));    // {uM}
+// dependence on potential
+k1_ANT_fi=k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);                        // {1/min}
+k2_ANT_fi=k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);                        // {1/min}
+k3_ANT_fi=k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);                        // {1/min}
+k4_ANT_fi=k4_ANT*exp((A*(-3)+B*(-3)+C)*fi);                        // {1/min}
+K_D_o_ANT_fi=K_D_o_ANT*exp(3*del_D*fi);                            // {uM}
+K_T_o_ANT_fi=K_T_o_ANT*exp(4*del_T*fi);                            // {uM}
+//
+q_fi=k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+//
+ch=k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn=(T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+// rate of labeled ATP, ADP entry
+v1_ANT=ch/zn;                                                                                      //  {1/min}
+//
+ch2=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+// rate of labeled ADP entry
+v2_ANT=ch2/zn;                                                                                    //  {1/min}
+//
+x1=T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));                                        // ??? {uM}
+x2=T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));                                        // ??? {uM}
+//
+ch3=k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3=(T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT=ch3/zn3;                                                                                   //  {1/min}
+//
+Vm_T=((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      // maximal ATP rate {1/min}
+       *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4=k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+// rate of labeled AFP entry  ATP=ADP                                                            // {1/min}
+v4_ANT=ch4/zn3;
+;
+Vm_D=((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     // maximal ADP rate {1/min}
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm=k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+//rate of exchange, ADP entry
+v_obm_ANT=ch_obm/zn;                                                                            // {1/min}
+//potential difference in mV
+ff=fi*26.5;                                                                                     // membrain potential in {mV}
+eff=ch_obm/ch;                                                                                  // effectiveness {--}
+
+#
+
+<INI 4
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 5
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 6
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+<INI 7
+#
+//! comments
+//base units uM, min, 1/min, {--} means dimentionless
+//! kinetic parameters
+K_t_mg=101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg=10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg=901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg=38168;    // constant of dissociation ADPH-Mg {uM} {1}
+;
+K_t_h=0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h=0.445;     // constant of dissociation ADP-H {uM} {1}
+//
+Mg_o=0;//1000;   // external Mg {uM} {2}
+Mg_i=0;//1000;   // internal Mg {uM} {2}
+pH_o=7.2;        // external pH {--} {2}
+pH_i=7.8;        // internal pH {--} {2}
+//
+T_i=5000;//5000; // internal ATP {uM}
+T_o=2000;//3000; // external ATP {uM}
+D_i=5000;//5000; // internal ADP {uM}
+D_o=50;          // external ADP {uM}
+//
+fi=6.9;          // {--} dimentionless potential
+//! fitted parameters  see article PMID: 16239329
+del_D=0;         // {--}
+del_T=0.07;      // {--}
+k1_ANT=35;       // {1/min}
+k2_ANT=10.8;     // {1/min}
+k3_ANT=21;       // {1/min}
+k4_ANT=29;       // {1/min}
+K_D_o_ANT=51;    // {uM}
+K_T_o_ANT=57;    // {uM}
+A=0.268;//-3.272670e-01;   // -a1 in article {--}
+B=-0.205;//2.532980e-01;   // -a2 in article {--}
+C=0.187;//2.149946e-01;    // a3 in article {--}
+
+#
+
+UseUsersPools[1] 
+#0
+UseUsersPools[2] 
+#0
+UseUsersPools[3] 
+#0
+UseUsersPools[4] 
+#0
+
+<NetworkID 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+<ProcessID 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+<RateLawID 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+<ParameterID 
+#0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+PATH->UserLaws
+<P Use User's mechanisms
+#
+
+TCN->UserLaws
+<P Use User's mechanisms
+#
+
+PON->UserLaws
+<P Use User's mechanisms
+#
+
+PIN->UserLaws
+<P Use User's mechanisms
+#
+FBA internal fluxes constraints
+External metabolites
+#
+Exchange fluxes direction
+#
+Exchange fluxes constraints
+Metabolites biomass composition
+#
+Metabolites maintenance energy requirements composition
+#
+Use biomass flux
+#0 
+Biomass constraint
+#0 0  0 0  0 0
+Use maintenance flux
+#0 
+Maintenance energy requirements constraint
+#0 0  0 0  0 0
+Biomass objective function contribution
+#0 
+Maintenance energy requirements objective function contribution
+#0 
+Internal fluxes objective function contribution
+#
+Exchange fluxes objective function contribution
+#
+Maximize objective function
+#0 
+
+<COMMENTS 0
+#
+
+#dbs#
+
+<COMMENTS 1
+#
+Model of adeninnucleotide-translocase (ANT) in rat liver mitochondria
+----------------------
+Here we introduce following designations for metabolite concentrations
+H_o - proton concentration in citosol
+H_i - proton concentration in matrix
+pH_o - pH in in citosol
+pH_i - pH in in matrix
+T_o_free - free ATP concentrations in citosol
+D_o_free - free ADP concentrations in citosol
+Mg_o - free Mg concenrations in citosol
+fi - membrane potential without degree
+T_o - total ATP concentrations in citosol
+D_o - total ADP concentrations in citosol
+Literature
+{1} The J. of Experimental Biology 1995, 198, 1775-1782
+{2} Biochemistry 1982, 21(5), 1082-1089
+
+#dbs#
+
+<COMMENTS 2
+#
+
+#dbs#
+
+<COMMENTS 3
+#
+
+#dbs#
+
+<COMMENTS 4
+#
+
+#dbs#
+
+<COMMENTS 5
+#
+
+#dbs#
+
+<COMMENTS 6
+#
+
+#dbs#
+
+<COMMENTS 7
+#
+
+#dbs#
+0
+0
+0
+0
+1
+Default
+0
+1
+0
+1
+
+1
+true
+0
+1
+
+1
+3
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+2
+mm
+mole
+1000
+15
+k1
+1.000000
+0.000000
+15
+1000
+k1
+1.000000
+0
+0
+1.000000e-06
+0
+0
+5
+k1
+0.001000
+k1
+0.001000
+0
+100
+0
+100
+2.000000
+-1
+-1
+0
+0
+1000
+1
+1.000000
+0.500000
+1
+1
+1
+0.000000
+1000000
+0
+0
+<listModelData>
+   <item>
+      <name></name>
+      <organizm></organizm>
+      <modeltype>0</modeltype>
+      <expdata></expdata>
+   </item>
+</listModelData>
+<listUnits size="1">
+</listUnits>
+<listComp size="1">
+   <item>
+      <name>Default_mc</name>
+      <comment></comment>
+      <unit></unit>
+      <outside></outside>
+      <spdim>3</spdim>
+      <sizes>1</sizes>
+      <const>0</const>
+      <rrule></rrule>
+      <cdown></cdown>
+   </item>
+</listComp>
+<listSpecies size="0">
+</listSpecies>
+<listRepository size="1" default="List1">
+   <item>
+      <name>List1</name>
+      <comment></comment>
+      <listParameters size="0">
+      </listParameters>
+   </item>
+</listRepository>
+<listRules size="0">
+</listRules>
+<listReactions size="0">
+</listReactions>
+<listcontent size="0">
+</listcontent>
+22jun2007
+         

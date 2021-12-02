@@ -1,0 +1,16 @@
+Model of adeninnucleotide-translocase (ANT) in rat liver mitochondria
+----------------------
+Here we introduce following designations for metabolite concentrations
+H_o - proton concentration in citosol
+H_i - proton concentration in matrix
+pH_o - pH in in citosol
+pH_i - pH in in matrix
+T_o_free - free ATP concentrations in citosol
+D_o_free - free ADP concentrations in citosol
+Mg_o - free Mg concenrations in citosol
+fi - membrane potential without degree
+T_o - total ATP concentrations in citosol
+D_o - total ADP concentrations in citosol
+Literature
+{1} The J. of Experimental Biology 1995, 198, 1775-1782
+{2} Biochemistry 1982, 21(5), 1082-1089

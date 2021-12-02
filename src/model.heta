@@ -1,0 +1,32 @@
+// main model
+
+vol_in @Compartment {units: L} .= 1;
+vol_out @Compartment {units: L} .= 1;
+
+T_i @Species {compartment: vol_in, units: uM} .= 0;
+D_i @Species {compartment: vol_in, units: uM} .= 0;
+T_o @Species {compartment: vol_out, units: uM} .= 0;
+D_o @Species {compartment: vol_out, units: uM} .= 0;
+
+Mg_i @Species {compartment: vol_in, boundary: true, units: uM} .= 0;
+Mg_o @Species {compartment: vol_out, boundary: true, units: uM} .= 0;
+
+pH_i @Const {units: 1} = 7.8;        
+pH_o @Const {units: 1} = 7.2;
+H_i @Species {compartment: vol_in, units: uM} .= exp(-pH_i * ln(10)) * 1e6;
+H_o @Species {compartment: vol_out, units: uM} .= exp(-pH_o * ln(10)) * 1e6;
+
+fi 'dimentionless potential' @Const {units: 1} = 6.9;
+
+T_i_free @Record {units: uM} := T_i / (1 + Mg_i/K_t_mg + H_i/K_t_h + Mg_i * H_i/K_th_mg/K_t_h);    // {uM}
+T_o_free @Record {units: uM} := T_o / (1 + Mg_o/K_t_mg + H_o/K_t_h + Mg_o * H_o/K_th_mg/K_t_h);    // {uM}
+D_i_free @Record {units: uM} := D_i / (1 + Mg_i/K_d_mg + H_i/K_d_h + Mg_i * H_i/K_dh_mg/K_d_h);    // {uM}
+D_o_free @Record {units: uM} := D_o / (1 + Mg_o/K_d_mg + H_o/K_d_h + Mg_o * H_o/K_dh_mg/K_d_h);    // {uM}
+
+K_t_mg @Const {units: uM} = 101;       // constant of dissociation ATP-Mg {uM}  {1}
+K_th_mg @Const {units: uM} = 10616;    // constant of dissociation ATPH-Mg {uM} {1}
+K_d_mg @Const {units: uM} = 901;       // constant of dissociation ADP-Mg {uM}  {1}
+K_dh_mg @Const {units: uM} = 38168;    // constant of dissociation ADPH-Mg {uM} {1}
+
+K_t_h @Const {units: uM} = 0.323;     // constant of dissociation ATP-H {uM} {1}
+K_d_h @Const {units: uM} = 0.445;     // constant of dissociation ADP-H {uM} {1}
