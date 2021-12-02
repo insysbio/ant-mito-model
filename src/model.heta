@@ -1,4 +1,5 @@
 // main model
+// base units uM, min, 1/min
 
 vol_in @Compartment {units: L} .= 1;
 vol_out @Compartment {units: L} .= 1;
@@ -13,20 +14,91 @@ Mg_o @Species {compartment: vol_out, boundary: true, units: uM} .= 0;
 
 pH_i @Const {units: 1} = 7.8;        
 pH_o @Const {units: 1} = 7.2;
-H_i @Species {compartment: vol_in, units: uM} .= exp(-pH_i * ln(10)) * 1e6;
-H_o @Species {compartment: vol_out, units: uM} .= exp(-pH_o * ln(10)) * 1e6;
+pH_uM_factor @Const {units: uM} = 1e6;
+H_i @Species {compartment: vol_in, units: uM} := exp(-pH_i * ln(10)) * pH_uM_factor;
+H_o @Species {compartment: vol_out, units: uM} := exp(-pH_o * ln(10)) * pH_uM_factor;
 
 fi 'dimentionless potential' @Const {units: 1} = 6.9;
 
-T_i_free @Record {units: uM} := T_i / (1 + Mg_i/K_t_mg + H_i/K_t_h + Mg_i * H_i/K_th_mg/K_t_h);    // {uM}
-T_o_free @Record {units: uM} := T_o / (1 + Mg_o/K_t_mg + H_o/K_t_h + Mg_o * H_o/K_th_mg/K_t_h);    // {uM}
-D_i_free @Record {units: uM} := D_i / (1 + Mg_i/K_d_mg + H_i/K_d_h + Mg_i * H_i/K_dh_mg/K_d_h);    // {uM}
-D_o_free @Record {units: uM} := D_o / (1 + Mg_o/K_d_mg + H_o/K_d_h + Mg_o * H_o/K_dh_mg/K_d_h);    // {uM}
+T_i_free @Record {units: uM} := T_i / (1 + Mg_i/K_t_mg + H_i/K_t_h + Mg_i * H_i/K_th_mg/K_t_h);
+T_o_free @Record {units: uM} := T_o / (1 + Mg_o/K_t_mg + H_o/K_t_h + Mg_o * H_o/K_th_mg/K_t_h);
+D_i_free @Record {units: uM} := D_i / (1 + Mg_i/K_d_mg + H_i/K_d_h + Mg_i * H_i/K_dh_mg/K_d_h);
+D_o_free @Record {units: uM} := D_o / (1 + Mg_o/K_d_mg + H_o/K_d_h + Mg_o * H_o/K_dh_mg/K_d_h);
 
-K_t_mg @Const {units: uM} = 101;       // constant of dissociation ATP-Mg {uM}  {1}
-K_th_mg @Const {units: uM} = 10616;    // constant of dissociation ATPH-Mg {uM} {1}
-K_d_mg @Const {units: uM} = 901;       // constant of dissociation ADP-Mg {uM}  {1}
-K_dh_mg @Const {units: uM} = 38168;    // constant of dissociation ADPH-Mg {uM} {1}
+K_t_mg @Const 'dissociation ATP-Mg' {units: uM} = 101;       // constant of dissociation ATP-Mg {1}
+K_th_mg @Const 'dissociation ATPH-Mg' {units: uM} = 10616;    // constant of dissociation ATPH-Mg {1}
+K_d_mg @Const 'dissociation ADP-Mg' {units: uM} = 901;       // constant of dissociation ADP-Mg {1}
+K_dh_mg @Const 'dissociation ADPH-Mg' {units: uM} = 38168;    // constant of dissociation ADPH-Mg {1}
 
-K_t_h @Const {units: uM} = 0.323;     // constant of dissociation ATP-H {uM} {1}
-K_d_h @Const {units: uM} = 0.445;     // constant of dissociation ADP-H {uM} {1}
+K_t_h @Const 'dissociation ATP-H' {units: uM} = 0.323;     // constant of dissociation ATP-H {1}
+K_d_h @Const 'dissociation ADP-H' {units: uM} = 0.445;     // constant of dissociation ADP-H {1}
+
+// reactions
+k1_ANT_fi @Record {units: 1/minute} := k1_ANT*exp((A*(-4)+B*(-4)+C)*fi);
+k2_ANT_fi @Record {units: 1/minute} := k2_ANT*exp((A*(-3)+B*(-4)+C)*fi);
+k3_ANT_fi @Record {units: 1/minute} := k3_ANT*exp((A*(-4)+B*(-3)+C)*fi);
+k4_ANT_fi @Record {units: 1/minute} := k4_ANT*exp((A*(-3)+B*(-3)+C)*fi); 
+K_D_o_ANT_fi @Record {units: uM} := K_D_o_ANT*exp(3*del_D*fi);
+K_T_o_ANT_fi @Record {units: uM} := K_T_o_ANT*exp(4*del_T*fi);
+
+q_fi @Record {units: 1} := k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
+
+ch @Record {units: uM/minute} := k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
+zn @Record {units: uM} := (T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+
+// rate of labeled ATP, ADP entry
+v1_ANT @Record {units: 1/minute} := ch / zn;   
+
+ch2 @Record {units: uM/minute} := k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
+
+// rate of labeled ADP entry
+v2_ANT @Record {units: 1/minute} := ch2 / zn;
+
+//
+x1 @Record {units: uM} := T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));
+x2 @Record {units: uM} := T_o/(1+Mg_o/K_d_mg+H_o/K_d_h+Mg_o*H_o/(K_dh_mg*K_d_h));
+//
+ch3 @Record {units: uM/minute} := k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT_fi*D_i_free*x1/K_T_o_ANT_fi;
+zn3  @Record {units: uM} := (T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
+
+// rate of labeled ATP entry  ATP=ADP
+v3_ANT @Record {units: 1/minute} := ch3 / zn3;
+
+// maximal ATP rate {1/min}
+Vm_T @Record {units: 1/minute} := ((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      
+    *(1/(1+K_T_o_ANT_fi/K_D_o_ANT_fi));
+//
+ch4 @Record {units: uM/minute} := k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
+
+// rate of labeled AFP entry  ATP=ADP
+v4_ANT @Record {units: 1/minute} := ch4 / zn3;
+
+// maximal ADP rate
+Vm_D @Record {units: 1/minute} := ((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     
+     *(1/(1+K_D_o_ANT_fi/K_T_o_ANT_fi));
+//
+ch_obm @Record {units: uM/minute} := k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
+
+//rate of exchange, ADP entry
+v_obm_ANT @Record {units: 1/minute} := ch_obm / zn;
+
+// fitted values from the article
+// see article PMID: 16239329
+block @Const begin
+    del_D {units: 1} = 0;
+    del_T {units: 1} = 0.07;
+    k1_ANT {units: 1/minute} = 35;
+    k2_ANT {units: 1/minute} = 10.8;
+    k3_ANT {units: 1/minute} = 21;
+    k4_ANT {units: 1/minute} = 29;
+    K_D_o_ANT {units: uM} = 51;
+    K_T_o_ANT {units: uM} = 57;
+    A {units: 1} = 0.268;  // -3.272670e-01;  // -a1 in article
+    B {units: 1} = -0.205; // 2.532980e-01;   // -a2 in article
+    C {units: 1} = 0.187;  // 2.149946e-01;   // a3 in article
+end
+
+// potential difference in mV
+mV_factor @Const {units: mV} = 26.5;
+ff @Record {units: mV} := fi * mV_factor;
