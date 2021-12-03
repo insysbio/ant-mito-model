@@ -44,16 +44,16 @@ K_T_o_ANT_fi @Record {units: uM} := K_T_o_ANT*exp(4*del_T*fi);
 q_fi @Record {units: 1} := k3_ANT_fi*K_D_o_ANT_fi*exp(fi)/(k2_ANT_fi*K_T_o_ANT_fi);      // equilibrium constant {--}
 
 ch @Record {units: uM/minute} := k1_ANT_fi*T_i_free*T_o_free*q_fi/K_T_o_ANT_fi+k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+
-   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;              // numeratior
-zn @Record {units: uM} := (T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi);                       // denominator
+   k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;               // numeratior
+zn @Record {units: uM} := (T_i_free*q_fi+D_i_free)*(1+T_o_free/K_T_o_ANT_fi+D_o_free/K_D_o_ANT_fi); // denominator
 
 // rate of labeled ATP, ADP entry
-v1_ANT @Record {units: 1/minute} := ch / zn;   
+v1_ANT @Record {units: 1/minute, output: true} := ch / zn;   
 
 ch2 @Record {units: uM/minute} := k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*D_o_free/K_D_o_ANT_fi;
 
 // rate of labeled ADP entry
-v2_ANT @Record {units: 1/minute} := ch2 / zn;
+v2_ANT @Record {units: 1/minute, output: true} := ch2 / zn;
 
 //
 x1 @Record {units: uM} := T_o/(1+Mg_o/K_t_mg+H_o/K_t_h+Mg_o*H_o/(K_th_mg*K_t_h));
@@ -63,7 +63,7 @@ ch3 @Record {units: uM/minute} := k1_ANT_fi*T_i_free*x1*q_fi/K_T_o_ANT_fi+k3_ANT
 zn3  @Record {units: uM} := (T_i_free*q_fi+D_i_free)*(1+x1/K_T_o_ANT_fi+x2/K_D_o_ANT_fi);
 
 // rate of labeled ATP entry  ATP=ADP
-v3_ANT @Record {units: 1/minute} := ch3 / zn3;
+v3_ANT @Record {units: 1/minute, output: true} := ch3 / zn3;
 
 // maximal ATP rate {1/min}
 Vm_T @Record {units: 1/minute} := ((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                      
@@ -72,7 +72,7 @@ Vm_T @Record {units: 1/minute} := ((k1_ANT_fi*T_i_free*q_fi+k3_ANT_fi*D_i_free)/
 ch4 @Record {units: uM/minute} := k2_ANT_fi*T_i_free*x2*q_fi/K_D_o_ANT_fi+k4_ANT_fi*D_i_free*x2/K_D_o_ANT_fi;
 
 // rate of labeled AFP entry  ATP=ADP
-v4_ANT @Record {units: 1/minute} := ch4 / zn3;
+v4_ANT @Record {units: 1/minute, output: true} := ch4 / zn3;
 
 // maximal ADP rate
 Vm_D @Record {units: 1/minute} := ((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/(T_i_free*q_fi+D_i_free))                     
@@ -80,12 +80,11 @@ Vm_D @Record {units: 1/minute} := ((k2_ANT_fi*T_i_free*q_fi+k4_ANT_fi*D_i_free)/
 //
 ch_obm @Record {units: uM/minute} := k2_ANT_fi*T_i_free*D_o_free*q_fi/K_D_o_ANT_fi-k3_ANT_fi*D_i_free*T_o_free/K_T_o_ANT_fi;
 
-//rate of exchange, ADP entry
+'''rate of exchange, ADP entry'''
 v_obm_ANT @Record {units: 1/minute} := ch_obm / zn;
 
 // fitted values from the article
-// see article PMID: 16239329
-block @Const begin
+block @Const {notes: "fitted, see PMID: 16239329"} begin
     del_D {units: 1} = 0;
     del_T {units: 1} = 0.07;
     k1_ANT {units: 1/minute} = 35;
