@@ -20,8 +20,8 @@
 *.md text
 *.m text
 # -diff
-*.slv text eol=crlf diff=slv
-*.dat text eol=crlf diff=dat
+# *.slv text eol=crlf diff=slv
+# *.dat text eol=crlf diff=dat
 *.cpp text
 *.svg text diff=xml
 *.xml text diff=xml

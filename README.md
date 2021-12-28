@@ -9,7 +9,7 @@ Adenine Nucleotide Translocase model
 
 This repository includes the model reproduced in Heta from the the paper and datasets from figures and the supplementary materials:
 
-> Metelkin, E. et al. Mathematical Modeling of Mitochondrial Adenine Nucleotide Translocase. 
+> Metelkin, E. Demin, O., Goryanin, I. Mathematical Modeling of Mitochondrial Adenine Nucleotide Translocase. 
 Biophysical Journal, Volume 90, Issue 2, 423 - 432
 
 ## diagnostics
