@@ -60,4 +60,4 @@ pars1["D_o"] <- 0
 pars1["D_i"] <- 0
 pars1["T_i"] <- 10000
 
-out <- (g*x)(times, pars1)
+out <- (g * x)(times, pars1)

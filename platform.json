@@ -1,12 +1,11 @@
 {
-  "builderVersion": "^0.6.9",
+  "builderVersion": "^0.7.4",
   "id": "ant-mito-model",
   "notes": "platform notes",
-  "version": "v0.1.0",
+  "version": "v0.1.1",
   "license": "MIT",
   "options": {
-    "debug": false,
-    "logs": "output.log",
+    "logPath": "output.log",
     "logLevel": "info",
     "skipExport": false,
     "unitsCheck": true

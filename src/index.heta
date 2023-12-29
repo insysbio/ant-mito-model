@@ -2,10 +2,10 @@
   ANT in mitochondria
 */
 // add qsp units
-include ./qsp-units.heta
+include ./qsp-units.heta;
 #defineUnit mV {units: (1e-3 volt)};
 
-include model.heta
+include model.heta;
 
 // exports
 #export { format: JSON, filepath: output };
